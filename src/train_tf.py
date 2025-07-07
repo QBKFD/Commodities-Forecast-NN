@@ -10,17 +10,17 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from src.architectures import (
     tf_stacked_gru,
     tf_stacked_lstm,
-    tf_hybrid_lstm_gru,
-    tf_tft,
-    tf_transformer
+    tf_tft_lstm,
+    tf_tft_gru,
+    tf_transformers
 )
 
 MODEL_MAP = {
     "tf_stacked_gru": tf_stacked_gru,
     "tf_stacked_lstm": tf_stacked_lstm,
-    "tf_hybrid_lstm_gru": tf_hybrid_lstm_gru,
-    "tf_tft": tf_tft,
-    "tf_transformer": tf_transformer
+    "tf_hybrid_lstm": tf_tft_lstm,
+    "tf_tft_gru": tf_tft_gru,
+    "tf_transformers": tf_transformers
 }
 
 def create_dual_sequences(X_price, X_macro, y, lookback, horizon=1):
@@ -77,7 +77,7 @@ def train_tf_model(model_name: str, config: dict):
     all_preds = []
 
     for year in years:
-        print(f"\n🚀 Walk-forward for year {year}")
+        print(f"\n Walk-forward for year {year}")
 
         train_mask = dates_seq < np.datetime64(f'{year}-01-01')
         test_mask = (dates_seq >= np.datetime64(f'{year}-01-01')) & (dates_seq < np.datetime64(f'{year + 1}-01-01'))
@@ -86,7 +86,7 @@ def train_tf_model(model_name: str, config: dict):
         Xp_test, Xm_test, y_test = Xp_seq[test_mask], Xm_seq[test_mask], y_seq[test_mask]
 
         if len(y_train) == 0 or len(y_test) == 0:
-            print(f"⚠️ Skipping {year} due to insufficient data.")
+            print(f" Skipping {year} due to insufficient data.")
             continue
 
         model = model_builder.build_model(config, lookback, n_price_features, n_macro_features)
@@ -112,7 +112,7 @@ def train_tf_model(model_name: str, config: dict):
         r2 = r2_score(y_true, y_pred)
         dir_acc = (np.sign(y_true.flatten()) == np.sign(y_pred.flatten())).mean()
 
-        print(f"📊 Year {year} — MSE: {mse:.6f}, RMSE: {rmse:.6f}, MAE: {mae:.6f}, R²: {r2:.4f}, DA: {dir_acc:.2%}")
+        print(f" Year {year} — MSE: {mse:.6f}, RMSE: {rmse:.6f}, MAE: {mae:.6f}, R²: {r2:.4f}, DA: {dir_acc:.2%}")
         results.append((year, mse, rmse, mae, r2, dir_acc))
 
         df_preds = pd.DataFrame({
@@ -145,4 +145,4 @@ def train_tf_model(model_name: str, config: dict):
         print("\n--- Average Metrics Across All Years ---")
         print(results_df.mean(numeric_only=True).round(4))
     else:
-        print("❌ No predictions were generated. Check data and config.")
+        print(" No predictions were generated. Check data and config.")

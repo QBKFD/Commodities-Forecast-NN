@@ -1,0 +1,42 @@
+{
+  "dataset": "data/gold_fixed_auto.csv",
+  "lookback": 30,
+  "horizon": 1,
+  "epochs": 25,
+  "batch_size": 32,
+  "years": [2020, 2021, 2022, 2023, 2024],
+
+  "price_features": [
+    "Open", "High", "Close", "Low", "Volume",
+    "SMA_7", "SMA_30", "RSI_14", "MACD",
+    "BB_Width", "Volume_Zscore",
+    "log_return", "log_return_lag1", "log_return_lag2",
+    "rolling_vol_5", "rolling_vol_20",
+    "abs_return", "intraday_range", "ATR_14",
+    "trend_up", "strong_momentum", "pos_in_range"
+  ],
+
+  "macro_features": [
+    "Fed_Funds_Rate", "CPI", "Unemployment_Rate", "M2", "M1", "IPI",
+    "Consumer_Sentiment", "1Y_Treasury_Rate", "GDP_Quarterly", "Balance_Trade", "SP500_Close",
+    "SP500_log_return", "SP500_SMA_30", "SP500_RSI_14", "DXY_Close",
+    "DXY_Log_Return", "VIX_Close", "GPRD", "GPRD_ACT",
+    "GPRD_THREAT", "GPRD_MA7", "GPRD_MA30"
+  ],
+
+  "units_price_1": 64,
+  "units_price_2": 32,
+  "units_price_3": 16,
+  "units_macro_1": 48,
+  "units_macro_2": 32,
+  "fused_dense_units_1": 128,
+  "fused_dense_units_2": 64,
+
+  "dropout_price_1": 0.1,
+  "dropout_price_2": 0.2,
+  "dropout_macro": 0.1,
+  "dropout_fused": 0.05,
+
+  "loss": "mse",
+  "learning_rate": 0.0001
+}
