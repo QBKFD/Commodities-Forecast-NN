@@ -6,43 +6,56 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.optimizers import Adam
 
 def build_model(config, lookback, n_price_features, n_macro_features):
+    # Configurable parameters
     lr = config.get("learning_rate", 0.01)
-    dropout = config.get("dropout", 0.001)
-    dense_units_1 = config.get("fused_dense_units_1", 32)
-    dense_units_2 = config.get("fused_dense_units_2", 32)
     loss_fn = config.get("loss", "mse")
+    dropout_price = config.get("dropout_price", 0.0)
+    dropout_macro = config.get("dropout_macro", 0.0)
+    dropout_cross = config.get("dropout_cross", 0.0)
+    dropout_fused = config.get("dropout_fused", 0.001)
+
+    price_units = config.get("price_dense_units", 64)
+    macro_units = config.get("macro_dense_units", 64)
+    fused_units_1 = config.get("fused_dense_units_1", 32)
+    fused_units_2 = config.get("fused_dense_units_2", 32)
+
+    attn_heads = config.get("attention_heads", 4)
+    attn_key_dim = config.get("attention_key_dim", 16)
+
     horizon = config.get("horizon", 1)
 
+    # Inputs
     price_input = Input(shape=(lookback, n_price_features), name='price_input')
     macro_input = Input(shape=(lookback, n_macro_features), name='macro_input')
 
-    # Transformer for price
-    price_attn = MultiHeadAttention(num_heads=4, key_dim=16)(price_input, price_input)
-    price_attn = Dropout(dropout)(price_attn)
+    # Self-attention for price
+    price_attn = MultiHeadAttention(num_heads=attn_heads, key_dim=attn_key_dim)(price_input, price_input)
+    price_attn = Dropout(dropout_price)(price_attn)
     price_attn = LayerNormalization()(price_attn)
-    price_attn = Dense(64, activation='relu')(price_attn)
+    price_attn = Dense(price_units, activation='relu')(price_attn)
 
-    # Transformer for macro
-    macro_attn = MultiHeadAttention(num_heads=4, key_dim=16)(macro_input, macro_input)
-    macro_attn = Dropout(dropout)(macro_attn)
+    # Self-attention for macro
+    macro_attn = MultiHeadAttention(num_heads=attn_heads, key_dim=attn_key_dim)(macro_input, macro_input)
+    macro_attn = Dropout(dropout_macro)(macro_attn)
     macro_attn = LayerNormalization()(macro_attn)
-    macro_attn = Dense(64, activation='relu')(macro_attn)
+    macro_attn = Dense(macro_units, activation='relu')(macro_attn)
 
-    # Cross Attention
-    cross_attn = MultiHeadAttention(num_heads=4, key_dim=16)(price_attn, macro_attn)
-    cross_attn = Dropout(dropout)(cross_attn)
+    # Cross attention: price attends to macro
+    cross_attn = MultiHeadAttention(num_heads=attn_heads, key_dim=attn_key_dim)(price_attn, macro_attn)
+    cross_attn = Dropout(dropout_cross)(cross_attn)
     cross_attn = LayerNormalization()(cross_attn)
 
     # Fusion
     fused = Concatenate()([price_attn, cross_attn])
-    fused = Dense(dense_units_1, activation='relu')(fused)
-    fused = Dropout(dropout)(fused)
-    fused = Dense(dense_units_2, activation='relu')(fused)
+    fused = Dense(fused_units_1, activation='relu')(fused)
+    fused = Dropout(dropout_fused)(fused)
+    fused = Dense(fused_units_2, activation='relu')(fused)
 
+    # Output
     pooled = GlobalAveragePooling1D()(fused)
     output = Dense(horizon, activation='linear', name='price_prediction')(pooled)
 
     model = Model(inputs=[price_input, macro_input], outputs=output)
-    model.compile(optimizer=Adam(learning_rate=lr), loss=loss_fn, metrics=['mae', 'mse'])
+    model.compile(optimizer=Adam(learning_rate=lr), loss=loss_fn, metrics=["mae", "mse"])
 
     return model
