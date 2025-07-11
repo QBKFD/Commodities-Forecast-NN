@@ -9,7 +9,6 @@ from tensorflow.keras.losses import Huber
 def build_model(config, lookback, n_price_features, n_macro_features):
     H = config.get("horizon", 1)
     
-    # Base fallback unit size
     base_units = config.get("units", 64)
 
     # GRU units per layer
