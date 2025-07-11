@@ -91,20 +91,32 @@ def train_tf_model(model_name: str, config: dict):
             print(f" Skipping {year} due to insufficient data.")
             continue
 
-        model = model_builder.build_model(config, lookback, n_price_features, n_macro_features)
+        if model_name == "benchmarks":
+    # Use benchmark pipeline from your `benchmarks.py`
+            model = model_builder.build_model(config)
 
-        callbacks = [
+    # Flatten inputs for classic ML models
+            X_train_flat = np.concatenate([Xp_train, Xm_train], axis=2).reshape(Xp_train.shape[0], -1)
+            X_test_flat = np.concatenate([Xp_test, Xm_test], axis=2).reshape(Xp_test.shape[0], -1)
+
+            model.fit(X_train_flat, y_train)
+            y_pred_scaled = model.predict(X_test_flat)
+        else:
+            model = model_builder.build_model(config, lookback, n_price_features, n_macro_features)
+
+            callbacks = [
             EarlyStopping(monitor='loss', patience=5, restore_best_weights=True),
             ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=1e-5)
-        ]
+            ]
 
-        model.fit([Xp_train, Xm_train], y_train,
-                  epochs=config["epochs"],
-                  batch_size=config["batch_size"],
-                  verbose=0,
-                  callbacks=callbacks)
+            model.fit([Xp_train, Xm_train], y_train,
+                epochs=config["epochs"],
+                batch_size=config["batch_size"],
+                verbose=0,
+                callbacks=callbacks)
 
-        y_pred_scaled = model.predict([Xp_test, Xm_test], verbose=0)
+            y_pred_scaled = model.predict([Xp_test, Xm_test], verbose=0)
+
         y_pred = scaler_target.inverse_transform(y_pred_scaled.reshape(-1, 1))
         y_true = scaler_target.inverse_transform(y_test.reshape(-1, 1))
 

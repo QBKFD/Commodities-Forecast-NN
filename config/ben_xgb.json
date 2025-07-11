@@ -1,16 +1,32 @@
 {
-  "dataset": "data/gold_fixed_auto.csv",
-  "price_features": ["Open", "High", "Low", "Volume", "SMA_7", "SMA_30", "RSI_14", "MACD"],
-  "macro_features": ["Fed_Funds_Rate", "CPI", "Unemployment_Rate", "M2"],
+  "model": "benchmarks",
+  "benchmark_type": "xgboost",
+
+  "n_estimators": 300,
+  "max_depth": 6,
+  "learning_rate": 0.01,
+  "subsample": 0.8,
+  "colsample_bytree": 0.8,
+  "random_state": 42,
+
   "lookback": 30,
   "horizon": 1,
   "years": [2020, 2021, 2022, 2023, 2024],
-  "model_type": "XGBoost",
-  "model_params": {
-    "n_estimators": 300,
-    "max_depth": 5,
-    "learning_rate": 0.001,
-    "random_state": 42
-  }
-}
+  "dataset": "data/gold.csv",
+  "price_features": [
+    "Open", "High", "Close", "Low", "Volume",
+    "SMA_7", "SMA_30", "RSI_14", "MACD",
+    "BB_Width", "Volume_Zscore",
+    "log_return", "log_return_lag1", "log_return_lag2",
+    "rolling_vol_5", "rolling_vol_20",
+    "abs_return", "intraday_range", "ATR_14",
+    "trend_up", "strong_momentum", "pos_in_range"
+  ],
 
+  "macro_features": [
+    "Fed_Funds_Rate", "CPI", "Unemployment_Rate", "M2", "M1", "IPI",
+    "Consumer_Sentiment", "1Y_Treasury_Rate", "GDP_Quarterly", "Balance_Trade", "SP500_Close",
+    "SP500_log_return", "SP500_SMA_30", "SP500_RSI_14", "DXY_Close",
+    "DXY_Log_Return", "VIX_Close", "GPRD", "GPRD_ACT",
+    "GPRD_THREAT", "GPRD_MA7", "GPRD_MA30"
+  ]}
