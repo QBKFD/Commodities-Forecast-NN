@@ -12,7 +12,8 @@ from src.architectures import (
     tf_stacked_lstm,
     tf_tft_lstm,
     tf_tft_gru,
-    tf_transformers
+    tf_transformers,
+    benchmarks
 )
 
 MODEL_MAP = {
@@ -20,7 +21,8 @@ MODEL_MAP = {
     "tf_stacked_lstm": tf_stacked_lstm,
     "tf_hybrid_lstm": tf_tft_lstm,
     "tf_tft_gru": tf_tft_gru,
-    "tf_transformers": tf_transformers
+    "tf_transformers": tf_transformers,
+    "benchmarks": benchmarks
 }
 
 def create_dual_sequences(X_price, X_macro, y, lookback, horizon=1):

@@ -1,0 +1,14 @@
+{
+  "dataset": "data/gold_fixed_auto.csv",
+  "price_features": ["Open", "High", "Low", "Volume", "SMA_7", "SMA_30", "RSI_14", "MACD"],
+  "macro_features": ["Fed_Funds_Rate", "CPI", "Unemployment_Rate", "M2"],
+  "lookback": 30,
+  "horizon": 1,
+  "years": [2020, 2021, 2022, 2023, 2024],
+  "model_type": "RandomForest",
+  "model_params": {
+    "n_estimators": 300,
+    "max_depth": 25,
+    "random_state": 42
+  }
+}
