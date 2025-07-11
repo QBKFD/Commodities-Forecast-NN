@@ -12,7 +12,7 @@
   "lookback": 30,
   "horizon": 1,
   "years": [2020, 2021, 2022, 2023, 2024],
-  "dataset": "data/gold.csv",
+  "dataset": "data/gold_fixed_auto.csv",
   "price_features": [
     "Open", "High", "Close", "Low", "Volume",
     "SMA_7", "SMA_30", "RSI_14", "MACD",
