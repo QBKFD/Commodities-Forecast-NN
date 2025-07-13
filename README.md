@@ -74,3 +74,4 @@ Commodities-Forecast-NN/
 └── requirements.txt # Dependencies
 ```
 
+<pre> ###  Run a Deep Learning Model ```bash python main.py --model tf_transformers --config config/con_transformers.json ``` </pre>
