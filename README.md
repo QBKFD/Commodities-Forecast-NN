@@ -26,7 +26,18 @@ Selected variables from the Federal Reserve Economic Database (FRED) such as int
 ###  External Financial & Geopolitical Indicators
 Market indices, volatility measures, and geopolitical risk indicators sourced from Yahoo Finance and the Geopolitical Risk Index (GPR).
 
+##  Models Implemented
+
+- **Recurrent Architectures**: LSTM, GRU (dual-input designs)
+- **Transformer-Based Models**: Autoformer, Informer, PatchTST, TimesNet
+- **Hybrid Architectures**: TFT + LSTM/GRU, Pure Transformers (dual-input designs)
+- **Other Deep Learning Models**: NHITS (hierarchical CNN-based forecasting model)
+- **Benchmark Models**: SVR, XGBoost, Random Forest
+- 
 ## Architectures
 ![Model Architecture](data/arch_pic.png)
+
+
+
 
 
