@@ -47,28 +47,30 @@ Market indices, volatility measures, and geopolitical risk indicators sourced fr
 All models are evaluated using **walk-forward validation** across two time horizons(1 day and 7 days) and commodities.
 
 
+```
 Commodities-Forecast-NN/
-├── config/                  # Configuration JSONs for each model
-│   ├── con_gru.json
-│   ├── con_lstm.json
-│   ├── con_tft_gru.json
-│   ├── con_tft_lstm.json
-│   ├── con_transformers.json
-│   ├── ben_rf.json
-│   ├── ben_xgb.json
-│   └── ben_svr.json
-├── data/                    # Input datasets
-├── notebooks/               # Jupyter notebooks (EDA etc.)
-├── output/                  # Generated metrics and plots
+├── config/ # Configuration JSONs for each model
+│ ├── con_gru.json
+│ ├── con_lstm.json
+│ ├── con_tft_gru.json
+│ ├── con_tft_lstm.json
+│ ├── con_transformers.json
+│ ├── ben_rf.json
+│ ├── ben_xgb.json
+│ └── ben_svr.json
+├── data/ # Input datasets
+├── notebooks/ # Jupyter notebooks (EDA etc.)
+├── output/ # Generated metrics and plots
 ├── src/
-│   ├── architectures/       # All model definitions
-│   │   ├── tf_stacked_gru.py
-│   │   ├── tf_stacked_lstm.py
-│   │   ├── tf_tft_gru.py
-│   │   ├── tf_tft_lstm.py
-│   │   ├── tf_transformers.py
-│   │   └── benchmarks.py
-│   └── train_tf.py          # Training script
-├── main.py                  # Entry point (optional)
-└── requirements.txt         # Dependencies
+│ ├── architectures/ # All model definitions
+│ │ ├── tf_stacked_gru.py
+│ │ ├── tf_stacked_lstm.py
+│ │ ├── tf_tft_gru.py
+│ │ ├── tf_tft_lstm.py
+│ │ ├── tf_transformers.py
+│ │ └── benchmarks.py
+│ └── train_tf.py # Training script
+├── main.py # Entry point (optional)
+└── requirements.txt # Dependencies
+```
 
