@@ -85,17 +85,12 @@ Before running any model, make sure to install all required Python packages:
 
 ```bash
 pip install -r requirements.txt
+```
 
-
-You can go on with the **next logical step**, like this:
-
----
-
-```markdown
-### 2. Run Deep Learning Models
+### 2. Run  Models
 
 Use the command below to run any deep learning architecture with its corresponding configuration file:
 
 ```bash
 python main.py --model tf_transformers --config config/con_transformers.json
-
+```
