@@ -47,5 +47,50 @@ Market indices, volatility measures, and geopolitical risk indicators sourced fr
 All models are evaluated using **walk-forward validation** across two time horizons(1 day and 7 days) and commodities.
 
 
+```
+Commodities-Forecast-NN/
+├── config/ # Configuration JSONs for each model
+│ ├── con_gru.json
+│ ├── con_lstm.json
+│ ├── con_tft_gru.json
+│ ├── con_tft_lstm.json
+│ ├── con_transformers.json
+│ ├── ben_rf.json
+│ ├── ben_xgb.json
+│ └── ben_svr.json
+├── data/ #Commodities
+├── notebooks/ # Jupyter notebooks (EDA etc.)
+├── output/ # Generated metrics and plots
+├── src/
+│ ├── architectures/ # All models
+│ │ ├── tf_stacked_gru.py
+│ │ ├── tf_stacked_lstm.py
+│ │ ├── tf_tft_gru.py
+│ │ ├── tf_tft_lstm.py
+│ │ ├── tf_transformers.py
+│ │ └── benchmarks.py
+│ └── train_tf.py # Training script
+├── main.py # 
+└── requirements.txt # Dependencies
+```
+
+##  Running the Repository
 
 
+
+
+### 1. Install Dependencies
+
+Before running any model, make sure to install all required Python packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Run  Models
+
+Use the command below to run any deep learning architecture with its corresponding configuration file:
+
+```bash
+python main.py --model tf_transformers --config config/con_transformers.json
+```
