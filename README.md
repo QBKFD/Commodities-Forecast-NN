@@ -75,8 +75,8 @@ Commodities-Forecast-NN/
 ```
 
  ## Run Repository
-  
+  </pre>
   
   ```bash python main.py --model tf_transformers --config config/con_transformers.json ``` 
-
+</pre>
 
