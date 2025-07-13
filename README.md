@@ -28,8 +28,9 @@ Market indices, volatility measures, and geopolitical risk indicators sourced fr
 
 ## Architectures
 <p align="center">
-  <img src="data/transformers_1.png" alt="Transformer Model" width="250"/>
-  <img src="data/tft_hybrid_1.png" alt="TFT Hybrid Model" width="250"/>
-  <img src="data/lstm_arch_2.png" alt="LSTM Model" width="250"/>
+  <img src="data/transformers_1.png" alt="Transformer Model" width="300"/>
+  <img src="data/tft_hybrid_1.png" alt="TFT Hybrid Model" width="300"/>
+  <img src="data/lstm_arch_2.png" alt="LSTM Model" width="300"/>
 </p>
+
 
