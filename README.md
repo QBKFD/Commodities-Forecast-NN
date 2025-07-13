@@ -74,9 +74,16 @@ Commodities-Forecast-NN/
 └── requirements.txt # Dependencies
 ```
 
- ## Run Repository
-  </pre>
-  
-  ```   bash python main.py --model tf_transformers --config config/con_transformers.json ``` 
-</pre>
+##  Running the Repository
+
+
+
+
+### 1. Install Dependencies
+
+Before running any model, make sure to install all required Python packages:
+
+```bash
+pip install -r requirements.txt
+
 
