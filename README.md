@@ -38,6 +38,14 @@ Market indices, volatility measures, and geopolitical risk indicators sourced fr
 ![Model Architecture](data/arch_pic.png)
 
 
+##  Evaluation Metrics
+
+- **Root Mean Squared Error (RMSE)**
+- **Mean Absolute Error (MAE)**
+- **Directional Accuracy (DA)**:
+
+All models are evaluated using **walk-forward validation** across two time horizons(1 day and 7 days) and commodities.
+
 
 
 
