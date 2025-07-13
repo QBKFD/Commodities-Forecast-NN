@@ -26,8 +26,10 @@ Selected variables from the Federal Reserve Economic Database (FRED) such as int
 ###  External Financial & Geopolitical Indicators
 Market indices, volatility measures, and geopolitical risk indicators sourced from Yahoo Finance and the Geopolitical Risk Index (GPR).
 
-# Architectures
-![Model Architecture](data/transformers_1.png)
-![Model Architecture](data/tft_hybrid_1.png)
-![Model Architecture](data/lstm_arch_2.png)
+## Architectures
+<p align="center">
+  <img src="data/transformers_1.png" alt="Transformer Model" width="250"/>
+  <img src="data/tft_hybrid_1.png" alt="TFT Hybrid Model" width="250"/>
+  <img src="data/lstm_arch_2.png" alt="LSTM Model" width="250"/>
+</p>
 
