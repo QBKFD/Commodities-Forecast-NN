@@ -58,11 +58,11 @@ Commodities-Forecast-NN/
 │ ├── ben_rf.json
 │ ├── ben_xgb.json
 │ └── ben_svr.json
-├── data/ # Input datasets
+├── data/ #Commodities
 ├── notebooks/ # Jupyter notebooks (EDA etc.)
 ├── output/ # Generated metrics and plots
 ├── src/
-│ ├── architectures/ # All model definitions
+│ ├── architectures/ # All models
 │ │ ├── tf_stacked_gru.py
 │ │ ├── tf_stacked_lstm.py
 │ │ ├── tf_tft_gru.py
@@ -70,7 +70,7 @@ Commodities-Forecast-NN/
 │ │ ├── tf_transformers.py
 │ │ └── benchmarks.py
 │ └── train_tf.py # Training script
-├── main.py # Entry point (optional)
+├── main.py # 
 └── requirements.txt # Dependencies
 ```
 
