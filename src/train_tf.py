@@ -6,9 +6,15 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+import os
+import uuid
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.get_logger().setLevel('ERROR')
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 from src.shap_analysis import run_shap_analysis, summarize_shap_results
-
 from src.architectures import (
     tf_stacked_gru,
     tf_stacked_lstm,
@@ -36,13 +42,13 @@ def create_dual_sequences(X_price, X_macro, y, lookback, horizon=1):
     return np.array(Xp), np.array(Xm), np.array(yt)
 
 def train_tf_model(model_name: str, config: dict):
-    # --- Set seed ---
     SEED = 42
     tf.random.set_seed(SEED)
     np.random.seed(SEED)
     random.seed(SEED)
 
-    # --- Load config params ---
+    run_id = str(uuid.uuid4())[:8]
+
     lookback = config["lookback"]
     H = config["horizon"]
     years = config["years"]
@@ -58,7 +64,6 @@ def train_tf_model(model_name: str, config: dict):
     X_macro_raw = df[macro_features].values
     y = df["y"].values
 
-    # --- Scale data ---
     scaler_price = StandardScaler()
     scaler_macro = StandardScaler()
     scaler_target = StandardScaler()
@@ -67,11 +72,9 @@ def train_tf_model(model_name: str, config: dict):
     X_macro_scaled = scaler_macro.fit_transform(X_macro_raw)
     y_scaled = scaler_target.fit_transform(y.reshape(-1, 1)).flatten()
 
-    # --- Create sequences ---
     Xp_seq, Xm_seq, y_seq = create_dual_sequences(X_price_scaled, X_macro_scaled, y_scaled, lookback, H)
     dates_seq = df.index[lookback + H - 1 : lookback + H - 1 + len(y_seq)]
 
-    # --- Prepare for walk-forward ---
     n_price_features = Xp_seq.shape[2]
     n_macro_features = Xm_seq.shape[2]
 
@@ -80,6 +83,9 @@ def train_tf_model(model_name: str, config: dict):
     results = []
     all_preds = []
     shap_data = []
+
+    os.makedirs("output/plots", exist_ok=True)
+    os.makedirs("output/metrics", exist_ok=True)
 
     for year in years:
         print(f"\n Walk-forward for year {year}")
@@ -93,7 +99,9 @@ def train_tf_model(model_name: str, config: dict):
         if len(y_train) == 0 or len(y_test) == 0:
             print(f" Skipping {year} due to insufficient data.")
             continue
+
         print(f"{year} shapes — Xp_train: {Xp_train.shape}, Xm_train: {Xm_train.shape}, y_train: {y_train.shape}")
+
         if model_name == "benchmarks":
             model = model_builder.build_model(config)
             X_train_flat = np.concatenate([Xp_train, Xm_train], axis=2).reshape(Xp_train.shape[0], -1)
@@ -114,12 +122,8 @@ def train_tf_model(model_name: str, config: dict):
                       verbose=0,
                       callbacks=callbacks)
 
+            y_pred_scaled = model.predict({'price_input': Xp_test, 'macro_input': Xm_test}, verbose=0)
 
-
-            y_pred_scaled = model.predict({'price_input': Xp_test, 'macro_input': Xm_test},verbose=0)
-
-
-            # Save for SHAP later
             shap_data.append({
                 "year": year,
                 "model": model,
@@ -127,6 +131,7 @@ def train_tf_model(model_name: str, config: dict):
                 "Xm_train": Xm_train,
                 "Xp_test": Xp_test,
                 "Xm_test": Xm_test,
+                "y_test": y_test,
                 "price_features": price_features,
                 "macro_features": macro_features
             })
@@ -151,6 +156,17 @@ def train_tf_model(model_name: str, config: dict):
         })
         all_preds.append(df_preds)
 
+        # Save per-year plot
+        plt.figure(figsize=(14, 5))
+        plt.plot(df_preds["ds"], df_preds["y_true"], label="Actual")
+        plt.plot(df_preds["ds"], df_preds["y_pred"], label="Forecast", linestyle="--")
+        plt.title(f"Rolling Forecast — {year}")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f"output/plots/forecast_{year}_{run_id}.png")
+        plt.close()
+
     if all_preds:
         all_preds_df = pd.concat(all_preds, ignore_index=True)
 
@@ -161,23 +177,36 @@ def train_tf_model(model_name: str, config: dict):
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig("output/plots/forecast_all_years.png")
+        plt.savefig(f"output/plots/forecast_all_years_{run_id}.png")
         plt.close()
 
         results_df = pd.DataFrame(results, columns=["Year", "MSE", "RMSE", "MAE", "R2", "Directional Accuracy"])
-        results_df.to_csv("output/metrics/metrics_by_year.csv", index=False)
+        results_df.to_csv(f"output/metrics/metrics_by_year_{run_id}.csv", index=False)
 
         print("\n--- Average Metrics Across All Years ---")
         print(results_df.mean(numeric_only=True).round(4))
 
-        # Optional SHAP
         if model_name != "benchmarks" and shap_data:
             run_shap = input("\nDo you want to run SHAP analysis? (yes/no): ").strip().lower()
-            if run_shap == "yes":
-                all_shap_values = run_shap_analysis(shap_data)
+            if run_shap in ["yes", "y"]:
+                all_shap_values = []
+                for item in shap_data:
+                    run_shap_analysis(
+                        item["model"],
+                        item["Xp_train"],
+                        item["Xm_train"],
+                        item["Xp_test"],
+                        item["Xm_test"],
+                        item["y_test"],
+                        item["price_features"],
+                        item["macro_features"],
+                        item["year"],
+                        results,
+                        years,
+                        all_shap_values
+                    )
                 summarize_shap_results(all_shap_values, results, years)
             else:
                 print("Skipping SHAP analysis.")
-
     else:
         print(" No predictions were generated. Check data and config.")
