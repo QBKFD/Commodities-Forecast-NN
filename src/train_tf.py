@@ -8,6 +8,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import os
 import uuid
+import shap
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.get_logger().setLevel('ERROR')
@@ -191,6 +192,7 @@ def train_tf_model(model_name: str, config: dict):
             if run_shap in ["yes", "y"]:
                 all_shap_values = []
                 for item in shap_data:
+                    print(f"Running SHAP for year {item['year']}...")
                     run_shap_analysis(
                         item["model"],
                         item["Xp_train"],
@@ -201,10 +203,9 @@ def train_tf_model(model_name: str, config: dict):
                         item["price_features"],
                         item["macro_features"],
                         item["year"],
-                        results,
-                        years,
                         all_shap_values
                     )
+                    print(f"Completed SHAP for year {item['year']}")
                 summarize_shap_results(all_shap_values, results, years)
             else:
                 print("Skipping SHAP analysis.")

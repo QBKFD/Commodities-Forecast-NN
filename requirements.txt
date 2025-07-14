@@ -1,1 +1,36 @@
 
+# Core scientific packages
+numpy
+pandas
+matplotlib
+seaborn
+
+# TensorFlow and Keras
+tensorflow
+scikeras
+
+# SHAP for explainability
+shap
+
+# Time series forecasting
+neuralforecast
+pytorch-lightning
+torch
+
+# Financial data sources and manipulation
+yfinance
+fredapi
+pandas_ta
+xlrd
+
+# Scikit-learn for preprocessing and evaluation
+scikit-learn
+
+# Statistical and econometric modeling
+arch
+
+# Ray for hyperparameter tuning
+ray[tune]
+
+# Optional: sometimes needed for plotting in notebooks
+jupyter

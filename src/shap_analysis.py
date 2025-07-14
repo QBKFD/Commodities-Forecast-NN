@@ -1,15 +1,16 @@
+import shap
 # shap_analysis.py
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import os
-
+tf.experimental.numpy.experimental_enable_numpy_behavior()
 def run_shap_analysis(model, Xp_train, Xm_train, Xp_test, Xm_test, y_test,
                       price_features, macro_features, year,
                       all_shap_values):
 
-    background_size = min(100, len(Xp_train))
+    background_size = min(200, len(Xp_train))
     test_sample_size = min(50, len(Xm_test))
 
     if background_size == 0 or test_sample_size == 0:
