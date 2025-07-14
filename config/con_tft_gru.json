@@ -24,19 +24,19 @@
     "GPRD_THREAT", "GPRD_MA7", "GPRD_MA30"
   ],
 
-  "units_price_1": 64,
-  "units_price_2": 32,
-  "units_price_3": 16,
-  "units_macro_1": 48,
-  "units_macro_2": 32,
-  "fused_dense_units_1": 128,
-  "fused_dense_units_2": 64,
+  "gru_units_1": 64,
+  "gru_units_2": 32,
+  "gru_units_3": 16,
 
-  "dropout_price_1": 0.1,
-  "dropout_price_2": 0.2,
+  "macro_attn_heads": 4,
+  "macro_attn_dim": 16,
+
+  "dense_1_units": 64,
+  "dense_2_units": 32,
+
   "dropout_macro": 0.1,
-  "dropout_fused": 0.05,
+  "dropout_price": 0.1,
+  "dropout_fused": 0.0,
 
   "loss": "mse",
   "learning_rate": 0.0001
-}

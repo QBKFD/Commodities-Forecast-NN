@@ -35,7 +35,7 @@ def build_model(config, lookback, n_price_features, n_macro_features):
     # Price - LSTM stack
     lstm_out = LSTM(lstm_units_1, return_sequences=True)(price_input)
     lstm_out = LSTM(lstm_units_2, return_sequences=True)(lstm_out)
-    lstm_out = Dropout(dropout_price_1)(lstm_out)  # ⬅️ New dropout added here
+    lstm_out = Dropout(dropout_price)(lstm_out)  # ⬅️ New dropout added here
     lstm_out = LSTM(lstm_units_3, return_sequences=True)(lstm_out)
     lstm_out = LayerNormalization()(lstm_out)
 
