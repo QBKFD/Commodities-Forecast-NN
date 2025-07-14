@@ -21,6 +21,8 @@ def build_model(config, lookback, n_price_features, n_macro_features):
     dense_2_units = config.get("fused_dense_units_2", 32)
 
     # Dropout
+    dropout_price = config.get("dropout_price", 0.0)
+
     dropout_macro = config.get("dropout_macro", 0.0)
     dropout_fused = config.get("dropout_fused", 0.0)
 

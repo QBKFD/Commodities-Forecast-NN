@@ -1,12 +1,12 @@
 {
-  "dataset": "data/silver_fixed_auto.csv",
+  "dataset": "data/gold_fixed_auto.csv",
   "lookback": 30,
   "horizon": 1,
   "epochs": 25,
   "batch_size": 32,
   "years": [2020, 2021, 2022, 2023, 2024],
 
-    "price_features": [
+  "price_features": [
     "Open", "High", "Close", "Low", "Volume",
     "SMA_7", "SMA_30", "RSI_14", "MACD",
     "BB_Width", "Volume_Zscore",
@@ -23,18 +23,18 @@
     "DXY_Log_Return", "VIX_Close", "GPRD", "GPRD_ACT",
     "GPRD_THREAT", "GPRD_MA7", "GPRD_MA30"
   ],
-  
-  "learning_rate": 0.01,
+
+  "learning_rate": 0.0005,
   "loss": "mse",
 
-  "dropout_price": 0.1,
-  "dropout_macro": 0.1,
-  "dropout_cross": 0.1,
-  "dropout_fused": 0.1,
+  "dropout_price": 0.0001,
+  "dropout_macro": 0.0001,
+  "dropout_cross": 0.0001,
+  "dropout_fused": 0.0001,
 
   "price_dense_units": 64,
   "macro_dense_units": 64,
-  "fused_dense_units_1": 32,
+  "fused_dense_units_1": 64,
   "fused_dense_units_2": 32,
 
   "attention_heads": 4,

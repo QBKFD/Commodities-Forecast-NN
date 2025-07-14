@@ -7,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
+from shap_analysis import run_shap_analysis, summarize_shap_results
+
 from src.architectures import (
     tf_stacked_gru,
     tf_stacked_lstm,
@@ -77,6 +79,7 @@ def train_tf_model(model_name: str, config: dict):
 
     results = []
     all_preds = []
+    shap_data = []
 
     for year in years:
         print(f"\n Walk-forward for year {year}")
@@ -92,30 +95,38 @@ def train_tf_model(model_name: str, config: dict):
             continue
 
         if model_name == "benchmarks":
-    # Use benchmark pipeline from your `benchmarks.py`
             model = model_builder.build_model(config)
-
-    # Flatten inputs for classic ML models
             X_train_flat = np.concatenate([Xp_train, Xm_train], axis=2).reshape(Xp_train.shape[0], -1)
             X_test_flat = np.concatenate([Xp_test, Xm_test], axis=2).reshape(Xp_test.shape[0], -1)
-
             model.fit(X_train_flat, y_train)
             y_pred_scaled = model.predict(X_test_flat)
         else:
             model = model_builder.build_model(config, lookback, n_price_features, n_macro_features)
 
             callbacks = [
-            EarlyStopping(monitor='loss', patience=5, restore_best_weights=True),
-            ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=1e-5)
+                EarlyStopping(monitor='loss', patience=5, restore_best_weights=True),
+                ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=1e-5)
             ]
 
             model.fit([Xp_train, Xm_train], y_train,
-                epochs=config["epochs"],
-                batch_size=config["batch_size"],
-                verbose=0,
-                callbacks=callbacks)
+                      epochs=config["epochs"],
+                      batch_size=config["batch_size"],
+                      verbose=0,
+                      callbacks=callbacks)
 
             y_pred_scaled = model.predict([Xp_test, Xm_test], verbose=0)
+
+            # Save for SHAP later
+            shap_data.append({
+                "year": year,
+                "model": model,
+                "Xp_train": Xp_train,
+                "Xm_train": Xm_train,
+                "Xp_test": Xp_test,
+                "Xm_test": Xm_test,
+                "price_features": price_features,
+                "macro_features": macro_features
+            })
 
         y_pred = scaler_target.inverse_transform(y_pred_scaled.reshape(-1, 1))
         y_true = scaler_target.inverse_transform(y_test.reshape(-1, 1))
@@ -137,11 +148,9 @@ def train_tf_model(model_name: str, config: dict):
         })
         all_preds.append(df_preds)
 
-    # --- Final evaluation summary ---
     if all_preds:
         all_preds_df = pd.concat(all_preds, ignore_index=True)
 
-        # Plot all years combined
         plt.figure(figsize=(18, 6))
         plt.plot(all_preds_df["ds"], all_preds_df["y_true"], label="Actual")
         plt.plot(all_preds_df["ds"], all_preds_df["y_pred"], label="Forecast", linestyle="--")
@@ -152,11 +161,20 @@ def train_tf_model(model_name: str, config: dict):
         plt.savefig("output/plots/forecast_all_years.png")
         plt.close()
 
-        # Save metrics
         results_df = pd.DataFrame(results, columns=["Year", "MSE", "RMSE", "MAE", "R2", "Directional Accuracy"])
         results_df.to_csv("output/metrics/metrics_by_year.csv", index=False)
 
         print("\n--- Average Metrics Across All Years ---")
         print(results_df.mean(numeric_only=True).round(4))
+
+        # Optional SHAP
+        if model_name != "benchmarks" and shap_data:
+            run_shap = input("\nDo you want to run SHAP analysis? (yes/no): ").strip().lower()
+            if run_shap == "yes":
+                all_shap_values = run_shap_analysis(shap_data)
+                summarize_shap_results(all_shap_values, results, years)
+            else:
+                print("Skipping SHAP analysis.")
+
     else:
         print(" No predictions were generated. Check data and config.")

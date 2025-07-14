@@ -1,5 +1,5 @@
 {
-  "dataset": "data/silver_fixed_auto.csv",
+  "dataset": "data/gold_fixed_auto.csv",
   "lookback": 30,
   "horizon": 1,
   "epochs": 25,
@@ -24,20 +24,20 @@
     "GPRD_THREAT", "GPRD_MA7", "GPRD_MA30"
   ],
 
-  "lstm_units_1": 128,
-  "lstm_units_2": 128,
-  "lstm_units_3": 64,
+  "units_price_1": 64,
+  "units_price_2": 32,
+  "units_price_3": 16,
 
-  "macro_attn_heads": 4,
-  "macro_attn_dim": 16,
+  "macro_attention_dim": 16,
+  "macro_attention_heads": 4,
 
-  "dense_1_units": 64,
-  "dense_2_units": 32,
+  "fused_dense_units_1": 64,
+  "fused_dense_units_2": 32,
 
-  "dropout_macro": 0.1,
   "dropout_price": 0.1,
-  "dropout_fused": 0.0,
+  "dropout_macro": 0.1,
+  "dropout_fused": 0.05,
 
   "loss": "mse",
-  "learning_rate": 0.001
+  "learning_rate": 0.0005
 }
