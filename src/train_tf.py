@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
-from shap_analysis import run_shap_analysis, summarize_shap_results
+from src.shap_analysis import run_shap_analysis, summarize_shap_results
 
 from src.architectures import (
     tf_stacked_gru,
@@ -93,7 +93,7 @@ def train_tf_model(model_name: str, config: dict):
         if len(y_train) == 0 or len(y_test) == 0:
             print(f" Skipping {year} due to insufficient data.")
             continue
-
+        print(f"{year} shapes — Xp_train: {Xp_train.shape}, Xm_train: {Xm_train.shape}, y_train: {y_train.shape}")
         if model_name == "benchmarks":
             model = model_builder.build_model(config)
             X_train_flat = np.concatenate([Xp_train, Xm_train], axis=2).reshape(Xp_train.shape[0], -1)
@@ -108,13 +108,16 @@ def train_tf_model(model_name: str, config: dict):
                 ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=1e-5)
             ]
 
-            model.fit([Xp_train, Xm_train], y_train,
+            model.fit({'price_input': Xp_train, 'macro_input': Xm_train}, y_train,
                       epochs=config["epochs"],
                       batch_size=config["batch_size"],
                       verbose=0,
                       callbacks=callbacks)
 
-            y_pred_scaled = model.predict([Xp_test, Xm_test], verbose=0)
+
+
+            y_pred_scaled = model.predict({'price_input': Xp_test, 'macro_input': Xm_test},verbose=0)
+
 
             # Save for SHAP later
             shap_data.append({
