@@ -1,0 +1,11 @@
+{
+  "dataset": "data/gold_fixed_auto.csv",
+  "lookback": 30,
+  "horizon": 7,
+  "years": [2020, 2021, 2022, 2023, 2024],
+  "learning_rate": 0.001,
+  "max_steps": 200,
+  "batch_size": 64,
+  "scaler": "standard",
+  "model_type": "informer"
+}
