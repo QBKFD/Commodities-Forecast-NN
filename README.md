@@ -77,9 +77,16 @@ Commodities-Forecast-NN/
 ##  Running the Repository
 
 
+### 1. Setup Environment
 
+To create and activate the conda environment:
 
-### 1. Install Dependencies
+```bash
+conda env create -f environment.yml
+conda activate env_comm
+```
+
+### 2. Install Dependencies(for non-Conda users)
 
 Before running any model, make sure to install all required Python packages:
 
@@ -87,10 +94,12 @@ Before running any model, make sure to install all required Python packages:
 pip install -r requirements.txt
 ```
 
-### 2. Run  Models
+### 3. Run  Models
 
 Use the command below to run any deep learning architecture with its corresponding configuration file:
 
 ```bash
 python main.py --model tf_transformers --config config/con_transformers.json
 ```
+
+
