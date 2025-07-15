@@ -16,42 +16,34 @@ def build_model(config, lookback, n_price_features, n_macro_features):
     macro_attn_dim = config.get("macro_attention_dim", 16)
     macro_attn_heads = config.get("macro_attention_heads", 4)
 
-    # Dense fusion units
     dense_1_units = config.get("fused_dense_units_1", 64)
     dense_2_units = config.get("fused_dense_units_2", 32)
 
-    # Dropout
     dropout_price = config.get("dropout_price", 0.0)
     dropout_macro = config.get("dropout_macro", 0.0)
     dropout_fused = config.get("dropout_fused", 0.0)
 
-    # Learning rate and loss
     learning_rate = config.get("learning_rate", 0.001)
     loss_fn = config.get("loss", "huber")
 
-    # Inputs
     price_input = Input(shape=(lookback, n_price_features), name="price_input")
     macro_input = Input(shape=(lookback, n_macro_features), name="macro_input")
 
-    # Price - GRU stack
     gru_out = GRU(gru_units_1, return_sequences=True)(price_input)
     gru_out = GRU(gru_units_2, return_sequences=True)(gru_out)
     gru_out = Dropout(dropout_price)(gru_out)
     gru_out = GRU(gru_units_3, return_sequences=True)(gru_out)
     gru_out = LayerNormalization()(gru_out)
 
-    # Macro - Transformer encoder style
     attn_out = MultiHeadAttention(num_heads=macro_attn_heads, key_dim=macro_attn_dim)(macro_input, macro_input)
     attn_out = Dropout(dropout_macro)(attn_out)
     attn_out = LayerNormalization()(attn_out)
     macro_encoded = Dense(64, activation="gelu")(attn_out)
 
-    # Cross attention: GRU → attends to macro
     cross_attn = MultiHeadAttention(num_heads=macro_attn_heads, key_dim=macro_attn_dim)(gru_out, macro_encoded)
     cross_attn = Dropout(dropout_macro)(cross_attn)
     cross_attn = LayerNormalization()(cross_attn)
 
-    # Fusion
     fused = Concatenate()([gru_out, cross_attn])
     fused = Dense(dense_1_units, activation="gelu")(fused)
     fused = Dropout(dropout_fused)(fused)
@@ -65,7 +57,7 @@ def build_model(config, lookback, n_price_features, n_macro_features):
     if loss_fn.lower() == "huber":
         loss = Huber()
     else:
-        loss = loss_fn  # e.g. "mse", "mae"
+        loss = loss_fn  
 
     model.compile(optimizer=Adam(learning_rate), loss=loss, metrics=["mae", "mse"])
     return model
