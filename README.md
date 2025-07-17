@@ -69,7 +69,7 @@ Commodities-Forecast-NN/
 │ │ ├── tf_tft_lstm.py
 │ │ ├── tf_transformers.py
 │ │ └── benchmarks.py
-│ └── train_tf.py # Training script
+│ └── train_tf.py, train_nn.py # Training scripts
 ├── main.py # 
 └── requirements.txt # Dependencies
 ```
