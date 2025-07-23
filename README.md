@@ -10,7 +10,7 @@ The project explores the use of deep learning architectures—including LSTM, GR
 
 -  **Custom Feature Engineering**: Created from raw market data and enriched with macroeconomic and geopolitical indicators
 -  **Dual-Input Model Design**: Combines sequential price data with static macro/sentiment features across multiple architectures
--  Evaluates a **wide variety of architectures**, including Transformer-based models (Autoformer, Informer, PatchTST, TimesNet), recurrent networks (LSTM, GRU), and hybrid variants (e.g., TFT+GRU)
+-  Evaluates a **wide variety of architectures**, including Transformer-based models (Autoformer, Informer), recurrent networks (LSTM, GRU), and hybrid variants (e.g., TFT+GRU)
 -  Walk-forward validation for robust out-of-sample performance
 -  Comprehensive evaluation using RMSE, MAE, and Directional Accuracy
 
